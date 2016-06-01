@@ -1,0 +1,57 @@
+#!/usr/bin/python
+# coding=utf-8
+
+import sys, os
+
+
+
+
+class Jungle:
+    def __init__(self):
+        self.root = os.path.realpath(os.path.split(__file__)[0])
+        self.scriptRoot = os.path.join(self.root, 'script')
+        self.resourcesRoot = os.path.join(self.root, 'resources')
+        self.projectTemplateRoot = os.path.join(self.resourcesRoot, 'project_template')
+        self.cmd_list = [
+            ('-h, --help', '', self.__showHelp),
+            ('maven, mvn', '<project_name> [path]', self.__newMavenProject),
+        ]
+
+    def __showHelp(self):
+        title = '-' * 30 + ' Jungle ' + '-' * 30
+        print title
+        print '-' * len(title)
+
+    def __newMavenProject(self, name, path='.'):
+        print '创建maven工程...............'
+        print '项目名称: %s' % (name)
+        print '项目路径: %s' % (os.path.realpath(path))
+        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_maven.sh'), os.path.join(self.projectTemplateRoot, 'SimpleMaven'), path, name))
+
+    def __invalid(self, cmd, argv):
+        if len(cmd) == 0:
+            return True if len(argv) == 1 else False
+        args = [x.strip() for x in cmd.split(',')]
+        ret = len(args)
+        if len(argv) - 2 > ret:
+            return False
+        for i in xrange(1, len(args)+1):
+            if args[-i].startswith('[') and args[-i].endswith(']'):
+                ret -= 1
+            else:
+                break
+        return True if len(argv) - 2 >= ret else False
+    
+    def run(self, argv):
+        for cmd in self.cmd_list:
+            if self.__invalid(cmd[1], argv) and argv[1] in [x.strip() for x in cmd[0].split(',')]:
+                cmd[2](*argv[2:])
+                return
+        self.__showHelp()
+
+
+
+
+if __name__ == '__main__':
+    jungle = Jungle()
+    jungle.run(sys.argv)
