@@ -4,8 +4,6 @@
 import sys, os
 
 
-
-
 class Jungle:
     def __init__(self):
         self.root = os.path.realpath(os.path.split(__file__)[0])
@@ -13,13 +11,16 @@ class Jungle:
         self.resourcesRoot = os.path.join(self.root, 'resources')
         self.projectTemplateRoot = os.path.join(self.resourcesRoot, 'project_template')
         self.cmd_list = [
-            ('-h, --help', '', self.__showHelp),
-            ('maven, mvn', '<project_name> [path]', self.__newMavenProject),
+            ('-h, --help', '', self.__showHelp, '使用帮助'),
+            ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
         ]
 
     def __showHelp(self):
         title = '-' * 30 + ' Jungle ' + '-' * 30
         print title
+        print '用法: jungle command [args]\n'
+        for cmd in self.cmd_list:
+            print cmd[0] + ' ' + cmd[1] + ': ' + cmd[3]
         print '-' * len(title)
 
     def __newMavenProject(self, name, path='.'):
@@ -43,13 +44,14 @@ class Jungle:
         return True if len(argv) - 2 >= ret else False
     
     def run(self, argv):
+        if len(argv) == 1:
+            self.__showHelp()
+            return
         for cmd in self.cmd_list:
             if self.__invalid(cmd[1], argv) and argv[1] in [x.strip() for x in cmd[0].split(',')]:
                 cmd[2](*argv[2:])
                 return
         self.__showHelp()
-
-
 
 
 if __name__ == '__main__':
