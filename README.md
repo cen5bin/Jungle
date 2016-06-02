@@ -5,3 +5,5 @@
 - resources
     - project_template
         - SimpleMaven: Maven项目模板
+    - configure
+        - vim: vim配置文件和插件

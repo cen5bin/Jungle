@@ -11,3 +11,7 @@ cd $target
 
 sed  "s/SimpleMaven/$3/g"  pom.xml > pom
 mv pom pom.xml
+
+sed  "s/SimpleMaven/$3/g"  run.sh > run
+mv run run.sh
+chmod +x run.sh
