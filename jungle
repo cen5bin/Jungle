@@ -14,6 +14,7 @@ class Jungle:
         self.cmd_list = [
             ('-h, --help', '', self.__showHelp, '使用帮助'),
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
+            ('cpp', '<name> [path]', self.__newSimpleCMakeProject, '\n\t创建基础CMake项目'),
             ('vim', '', self.__configVim, 'vim配置'),
             ('idea', '', self.__configIDEA, 'idea配置')
         ]
@@ -31,6 +32,12 @@ class Jungle:
         print '项目名称: %s' % (name)
         print '项目路径: %s' % (os.path.realpath(path))
         os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_maven.sh'), os.path.join(self.projectTemplateRoot, 'SimpleMaven'), path, name))
+
+    def __newSimpleCMakeProject(self, name, path='.'):
+        print '创建Simple CMake工程...............'
+        print '项目名称: %s' % (name)
+        print '项目路径: %s' % (os.path.realpath(path))
+        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_simple_cmake.sh'), os.path.join(self.projectTemplateRoot, 'SimpleCMake'), path, name))
 
     def __configVim(self):
         print '配置vim......................'
