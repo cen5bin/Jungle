@@ -16,7 +16,8 @@ class Jungle:
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
             ('cpp', '<name> [path]', self.__newSimpleCMakeProject, '\n\t创建基础CMake项目'),
             ('vim', '', self.__configVim, 'vim配置'),
-            ('idea', '', self.__configIDEA, 'idea配置')
+            ('idea', '', self.__configIDEA, 'idea配置'),
+            ('tmux', '', self.__configTmux, 'tmux配置'),
         ]
 
     def __showHelp(self):
@@ -45,6 +46,9 @@ class Jungle:
         
     def __configIDEA(self):
         print 'idea的配置在%s中，请在软件中导入' % (os.path.join(self.configureRoot, 'idea'))
+
+    def __configTmux(self):
+        os.system('cp %s ~/.tmux.conf' % (os.path.join(os.path.join(self.configureRoot, 'tmux'), 'tmux.conf')))
 
     def __invalid(self, cmd, argv):
         if len(cmd) == 0:
