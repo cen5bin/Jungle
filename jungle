@@ -6,7 +6,7 @@ import sys, os
 
 class Jungle:
     def __init__(self):
-        self.root = os.path.realpath(os.path.split(__file__)[0])
+        self.root = os.path.split(os.path.realpath(__file__))[0]
         self.scriptRoot = os.path.join(self.root, 'script')
         self.resourcesRoot = os.path.join(self.root, 'resources')
         self.projectTemplateRoot = os.path.join(self.resourcesRoot, 'project_template')
@@ -14,7 +14,8 @@ class Jungle:
         self.cmd_list = [
             ('-h, --help', '', self.__showHelp, '使用帮助'),
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
-            ('cpp', '<name> [path]', self.__newSimpleCMakeProject, '\n\t创建基础CMake项目'),
+            ('cpp', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
+            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass'),
             ('vim', '', self.__configVim, 'vim配置'),
             ('idea', '', self.__configIDEA, 'idea配置'),
             ('tmux', '', self.__configTmux, 'tmux配置'),
@@ -39,6 +40,19 @@ class Jungle:
         print '项目名称: %s' % (name)
         print '项目路径: %s' % (os.path.realpath(path))
         os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_simple_cmake.sh'), os.path.join(self.projectTemplateRoot, 'SimpleCMake'), path, name))
+
+    def __newFile(self, kind, name, path='.'):
+        if kind in ['cpp', 'cc', 'c']:
+            print '创建%s文件...............' % kind
+            print '文件名称: %s.h %s.%s' % (name, name, kind)
+            print '文件路径: %s' % (os.path.realpath(path))
+            filename = os.path.join(path, name)
+            f = open(filename + '.h', 'w')
+            f.write('#ifndef _%s_H_\n#define _%s_H_\n\n\n#endif' % (name.upper(), name.upper()))
+            f.close()
+            f = open(filename + ('.%s' % kind), 'w')
+            f.write('#include "%s.h"\n\n' % name)
+            f.close()
 
     def __configVim(self):
         print '配置vim......................'
