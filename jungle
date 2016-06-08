@@ -15,7 +15,7 @@ class Jungle:
             ('-h, --help', '', self.__showHelp, '使用帮助'),
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
             ('cpp', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
-            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass'),
+            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass,cheader'),
             ('vim', '', self.__configVim, 'vim配置'),
             ('idea', '', self.__configIDEA, 'idea配置'),
             ('tmux', '', self.__configTmux, 'tmux配置'),
@@ -42,17 +42,29 @@ class Jungle:
         os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_simple_cmake.sh'), os.path.join(self.projectTemplateRoot, 'SimpleCMake'), path, name))
 
     def __newFile(self, kind, name, path='.'):
-        if kind in ['cpp', 'cc', 'c']:
+        if kind in ['cpp', 'cc', 'c', 'cheader', 'cclass']:
             print '创建%s文件...............' % kind
-            print '文件名称: %s.h %s.%s' % (name, name, kind)
+            if kind not in ['cheader', 'cclass']:
+                print '文件名称: %s.h %s.%s' % (name, name, kind)
+            elif kind == 'cheader':
+                print '文件名称: %s.h' % (name)
+            elif kind == 'cclass':
+                print '文件名称: %s.h %s.cc' % (name, name)
             print '文件路径: %s' % (os.path.realpath(path))
             filename = os.path.join(path, name)
             f = open(filename + '.h', 'w')
-            f.write('#ifndef _%s_H_\n#define _%s_H_\n\n\n#endif' % (name.upper(), name.upper()))
+            f.write('#ifndef _%s_H_\n' % name.upper())
+            f.write('#define _%s_H_\n' % name.upper())
+            if kind == 'cclass':
+                f.write('class %s {\n\tpublic:\n\t\t%s(){}\n\t\tvirtual ~%s(){}\n\n\tprivate:\n\n};\n\n' % (name, name, name))
+                pass
+            f.write('#endif')
             f.close()
-            f = open(filename + ('.%s' % kind), 'w')
-            f.write('#include "%s.h"\n\n' % name)
-            f.close()
+            if kind != 'cheader':
+                kind = 'cc' if kind == 'cclass' else kind
+                f = open(filename + ('.%s' % kind), 'w')
+                f.write('#include "%s.h"\n\n' % name)
+                f.close()
 
     def __configVim(self):
         print '配置vim......................'
