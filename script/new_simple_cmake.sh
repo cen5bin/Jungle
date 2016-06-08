@@ -6,8 +6,12 @@ fi
 source=$1
 target=$2/$3
 
+
 cp -r $source $target
 cd $target
 
-mkdir -p Build/Debug
-mkdir -p Build/Release
+sed "s/PROJECT_NAME/$3/g" CMakeLists.txt > tmp
+mv tmp CMakeLists.txt
+
+mkdir -p include
+mkdir -p lib
