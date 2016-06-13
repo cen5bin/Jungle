@@ -14,7 +14,8 @@ class Jungle:
         self.cmd_list = [
             ('-h, --help', '', self.__showHelp, '使用帮助'),
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
-            ('cpp', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
+            ('cpp', '<name> [path]', self.__newStandardCMakeProject, '创建标准CMake项目，自带gtest和glog'),
+            ('cpp0', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
             ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass,cheader'),
             ('vim', '', self.__configVim, 'vim配置'),
             ('idea', '', self.__configIDEA, 'idea配置'),
@@ -40,6 +41,13 @@ class Jungle:
         print '项目名称: %s' % (name)
         print '项目路径: %s' % (os.path.realpath(path))
         os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_simple_cmake.sh'), os.path.join(self.projectTemplateRoot, 'SimpleCMake'), path, name))
+
+    def __newStandardCMakeProject(self, name, path='.'):
+        print '创建Standard CMake工程...............'
+        print '项目名称: %s' % (name)
+        print '项目路径: %s' % (os.path.realpath(path))
+        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_standard_cmake.sh'), os.path.join(self.projectTemplateRoot, 'StandardCMake'), path, name))
+
 
     def __newFile(self, kind, name, path='.'):
         if kind in ['cpp', 'cc', 'c', 'cheader', 'cclass']:
