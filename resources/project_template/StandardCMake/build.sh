@@ -92,10 +92,23 @@ test_all() {
     done
 }
 
+help(){
+    echo "----------------------------------------------------------------------"
+    echo -e "usage: ./build.sh [commands] [args]\n"
+    echo "-h, help: 帮助"
+    echo "debug, release, all: 构建相应版本"
+    echo "-3, thirdparty [name]: 编译第三方库"
+    echo "-c, clean [all]"
+    echo "-t, test [all|name]: 测试"
+    echo "----------------------------------------------------------------------"
+}
+
 if [[ $# == 0 ]]; then
     build_project
 elif [[ $# -ge 1 ]]; then
-    if [[ $1 == "debug" ]] || [[ $1 == "release" ]]; then
+    if [[ $1 == "help" ]] || [[ $1 == "-h" ]]; then
+        help
+    elif [[ $1 == "debug" ]] || [[ $1 == "release" ]]; then
         build_project $1
     elif [[ $1 == "-3" ]] || [[ $1 == "thirdparty" ]]; then
         if [[ $# -ge 2 ]]; then
