@@ -13,6 +13,7 @@ class Jungle:
         self.configureRoot = os.path.join(self.resourcesRoot, 'configure')
         self.cmd_list = [
             ('-h, --help', '', self.__showHelp, '使用帮助'),
+            ('install', '', self.__install, '安装'),
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
             ('cpp', '<name> [path]', self.__newStandardCMakeProject, '创建标准CMake项目，自带gtest和glog'),
             ('cpp0', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
@@ -29,6 +30,11 @@ class Jungle:
         for cmd in self.cmd_list:
             print cmd[0] + ' ' + cmd[1] + ': ' + cmd[3]
         print '-' * len(title)
+
+    def __install(self):
+        print '安装jungle...'
+        os.system('sh %s' % (os.path.join(self.scriptRoot, 'install_jungle.sh')))
+        print '安装完成，请执行source ~/.bashrc'
 
     def __newMavenProject(self, name, path='.'):
         print '创建maven工程...............'
