@@ -16,7 +16,7 @@ class Jungle:
             ('maven, mvn', '<name> [path]', self.__newMavenProject, '\n\t创建maven项目，必须指定项目名称，不指定路径默认就是当前路径'),
             ('cpp', '<name> [path]', self.__newStandardCMakeProject, '创建标准CMake项目，自带gtest和glog'),
             ('cpp0', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
-            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass,cheader'),
+            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass,cheader, ctest'),
             ('vim', '', self.__configVim, 'vim配置'),
             ('idea', '', self.__configIDEA, 'idea配置'),
             ('tmux', '', self.__configTmux, 'tmux配置'),
@@ -48,11 +48,23 @@ class Jungle:
         print '项目路径: %s' % (os.path.realpath(path))
         os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_standard_cmake.sh'), os.path.join(self.projectTemplateRoot, 'StandardCMake'), path, name))
 
+    def __nameTransform(self, name):
+        if '_' not in name:
+            return name
+        return ''.join([x.title() for x in name.split('_')])
 
     def __newFile(self, kind, name, path='.'):
-        if kind in ['cpp', 'cc', 'c', 'cheader', 'cclass']:
+        if kind in ['cpp', 'cc', 'c', 'cheader', 'cclass', 'ctest']:
             print '创建%s文件...............' % kind
-            if kind not in ['cheader', 'cclass']:
+            if kind == 'ctest':
+                print '文件名称: %s.cc' % (name)
+                filename = os.path.join(path, name)
+                f = open(filename + '.cc', 'w')
+                f.write('#include "gtest/gtest.h"\n')
+                f.write('\nTEST(%s, test) {\n\n}\n' % self.__nameTransform(name));
+                f.close()
+                return
+            elif kind not in ['cheader', 'cclass']:
                 print '文件名称: %s.h %s.%s' % (name, name, kind)
             elif kind == 'cheader':
                 print '文件名称: %s.h' % (name)
@@ -64,7 +76,8 @@ class Jungle:
             f.write('#ifndef __%s_H\n' % name.upper())
             f.write('#define __%s_H\n' % name.upper())
             if kind == 'cclass':
-                f.write('class %s {\n\tpublic:\n\t\t%s(){}\n\t\tvirtual ~%s(){}\n\n\tprivate:\n\n};\n\n' % (name, name, name))
+                name1 = self.__nameTransform(name)
+                f.write('class %s {\n\tpublic:\n\t\t%s(){}\n\t\tvirtual ~%s(){}\n\n\tprivate:\n\n};\n\n' % (name1, name1, name1))
                 pass
             f.write('#endif')
             f.close()

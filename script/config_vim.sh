@@ -5,4 +5,5 @@ fi
 cd $1
 tar xzvf vim.tar.gz
 mv vimrc ~/.vimrc
+rm -rf ~/.vim
 mv vim ~/.vim
