@@ -55,8 +55,8 @@ class Jungle:
         os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_standard_cmake.sh'), os.path.join(self.projectTemplateRoot, 'StandardCMake'), path, name))
 
     def __nameTransform(self, name):
-        if '_' not in name:
-            return name
+        #if '_' not in name:
+        #   return name
         return ''.join([x.title() for x in name.split('_')])
 
     def __newFile(self, kind, name, path='.'):

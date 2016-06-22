@@ -12,6 +12,11 @@ DEP_PATH=$PROJECT_ROOT/deps
 
 mkdir -p $BUILD_DEBUG_PATH $BUILD_RELEASE_PATH $BUILD_THIRD_PARTY_PATH $BUILD_TEST_PATH
 mkdir -p $LIB_PATH $INCLUDE_PATH
+CORE_NUM=$((`nproc`-4))
+if [[ $CORE_NUM -lt 4 ]]; then
+    CORE_NUM=4
+fi
+
 
 extract_dep() {
     mkdir -p $2
@@ -44,7 +49,7 @@ build_glog() {
         extract_dep $path $target_path
         cd $target_path
         ./configure --prefix=$BUILD_THIRD_PARTY_PATH/glog
-        make -j4
+        make -j$CORE_NUM
         make install
         cd -
         cp -r $BUILD_THIRD_PARTY_PATH/glog/include/glog $INCLUDE_PATH
@@ -77,7 +82,7 @@ build_project() {
     mkdir -p $build
     cd $build
     /usr/bin/cmake $args $PROJECT_ROOT
-    make
+    make -j$CORE_NUM
     cd -
     ln -s $build/run run
 }
@@ -126,9 +131,9 @@ elif [[ $# -ge 1 ]]; then
         build_project
     elif [[ $1 == "clean" ]] || [[ $1 == "-c" ]]; then
         if [[ $# -ge 2 ]] && [[ $2 == "all" ]]; then
-            rm -rf $THIRD_PARTY_PATH 
+            rm -rf $THIRD_PARTY_PATH $INCLUDE_PATH $LIB_PATH
         fi
-        rm -rf $BUILD_PATH $INCLUDE_PATH $LIB_PATH
+        rm -rf $BUILD_PATH 
         rm -f $PROJECT_ROOT/run
     elif [[ $1 == "test" ]] || [[ $1 == "-t" ]]; then
         if [[ $# -ge 2 ]] && [[ $2 != "all" ]]; then
