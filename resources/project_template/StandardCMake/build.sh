@@ -2,6 +2,7 @@ cd `dirname $0`
 PROJECT_ROOT=`pwd`
 THIRD_PARTY_PATH=$PROJECT_ROOT/_thirdparty
 BUILD_PATH=$PROJECT_ROOT/_build
+BIN_PATH=$PROJECT_ROOT/bin
 BUILD_DEBUG_PATH=$BUILD_PATH/debug
 BUILD_RELEASE_PATH=$BUILD_PATH/release
 BUILD_THIRD_PARTY_PATH=$BUILD_PATH/thirdparty
@@ -9,6 +10,7 @@ BUILD_TEST_PATH=$BUILD_PATH/test
 LIB_PATH=$PROJECT_ROOT/lib
 INCLUDE_PATH=$PROJECT_ROOT/include
 DEP_PATH=$PROJECT_ROOT/deps
+SRC_PATH=$PROJECT_ROOT/src
 
 mkdir -p $BUILD_DEBUG_PATH $BUILD_RELEASE_PATH $BUILD_THIRD_PARTY_PATH $BUILD_TEST_PATH
 mkdir -p $LIB_PATH $INCLUDE_PATH
@@ -74,17 +76,31 @@ build_project() {
     rm -f run
     build=$BUILD_DEBUG_PATH
     args="-DCMAKE_BUILD_TYPE=Debug"
-    if [ $# = 1 ] && [ $1 = "release" ]; then
+    if [[ $# -ge 1 ]] && [[ $1 = "release" ]]; then
         build=$BUILD_RELEASE_PATH
         args='-DCMAKE_BUILD_TYPE=Release'
     fi
 
     mkdir -p $build
     cd $build
-    /usr/bin/cmake $args $PROJECT_ROOT
+    cmake_opts=""
+    if [[ $# == 2 ]]; then
+        cmake_opts=$2
+    fi
+    /usr/bin/cmake $args $cmake_opts $PROJECT_ROOT
     make -j$CORE_NUM
     cd -
     ln -s $build/run run
+}
+
+build_file() {
+    mkdir -p $BIN_PATH 
+    build=$BUILD_DEBUG_PATH
+    mkdir -p $build
+    cd $build
+    /usr/bin/cmake -D NORMAL_MODE=OFF -D NORMAL_MODE_WITHOUT_TEST=OFF -D OTHER_MAIN_MODE=ON -D OTHER_MAIN_FILE=$1 $PROJECT_ROOT
+    make -j$CORE_NUM
+    cd -
 }
 
 test_code() {
@@ -101,10 +117,12 @@ help(){
     echo "----------------------------------------------------------------------"
     echo -e "usage: ./build.sh [commands] [args]\n"
     echo "-h, help: 帮助"
-    echo "debug, release, all: 构建相应版本"
+    echo "debug, release [on]: 构建相应版本, 设定on时编译测试代码"
+    echo "all: 构建相应版本"
     echo "-3, thirdparty [name]: 编译第三方库"
     echo "-c, clean [all]"
     echo "-t, test [all|name]: 测试"
+    echo "source_file: 指定一个文件进行编译，得到一个临时的可执行文件"
     echo "----------------------------------------------------------------------"
 }
 
@@ -114,7 +132,11 @@ elif [[ $# -ge 1 ]]; then
     if [[ $1 == "help" ]] || [[ $1 == "-h" ]]; then
         help
     elif [[ $1 == "debug" ]] || [[ $1 == "release" ]]; then
-        build_project $1
+        if [[ $# -ge 2 ]] && [[ $2 == "on" ]]; then
+            build_project $1 "-D NORMAL_MODE=ON -D NORMAL_MODE_WITHOUT_TEST=OFF"
+        else
+            build_project $1 "-D NORMAL_MODE_WITHOUT_TEST=ON -D NORMAL_MODE=OFF"
+        fi
     elif [[ $1 == "-3" ]] || [[ $1 == "thirdparty" ]]; then
         if [[ $# -ge 2 ]]; then
             if type "build_$2" > /dev/null 2>&1; then
@@ -133,7 +155,7 @@ elif [[ $# -ge 1 ]]; then
         if [[ $# -ge 2 ]] && [[ $2 == "all" ]]; then
             rm -rf $THIRD_PARTY_PATH $INCLUDE_PATH $LIB_PATH
         fi
-        rm -rf $BUILD_PATH 
+        rm -rf $BUILD_PATH $BIN_PATH
         rm -f $PROJECT_ROOT/run
     elif [[ $1 == "test" ]] || [[ $1 == "-t" ]]; then
         if [[ $# -ge 2 ]] && [[ $2 != "all" ]]; then
@@ -141,5 +163,8 @@ elif [[ $# -ge 1 ]]; then
         else
             test_all
         fi
+    elif test -f $1; then
+        echo "build file $1"
+        build_file $1
     fi
 fi

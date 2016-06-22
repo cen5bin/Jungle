@@ -1,0 +1,7 @@
+_build/
+_thirdparty/
+include/
+lib/
+run
+gmon.out
+bin/

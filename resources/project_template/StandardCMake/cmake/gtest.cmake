@@ -14,7 +14,8 @@ foreach(test ${TEST_SRCS})
     add_executable(${TEST_NAME} ${TEST_DIR}/${test})
     set_target_properties(${TEST_NAME}
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIR}/test"
+        #        RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIR}/test"
+        RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
         )
     target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${COMMON_LIBRARIES})
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
