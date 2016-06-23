@@ -36,32 +36,28 @@ build_gtest() {
         target_path=$THIRD_PARTY_PATH/gtest
         extract_dep $path $target_path
     fi
-    #path=$THIRD_PARTY_PATH/gtest-1.7.0
-    #if test -d $path; then
-    #    tmp_path=$BUILD_THIRD_PARTY_PATH/`basename $path`
-    #    mkdir -p $tmp_path
-    #    cd $tmp_path
-    #    cmake $path
-    #    make
-    #    cp libgtest* $LIB_PATH
-    #    cp -r $path/include/gtest $INCLUDE_PATH
-    #    cd -
-    #fi
+}
+
+normal_install() {
+    path=$1
+    name=$2
+    if test -e $path; then
+        target_path=$THIRD_PARTY_PATH/$name
+        extract_dep $path $target_path
+        cd $target_path
+        ./configure --prefix=$BUILD_THIRD_PARTY_PATH/$name
+        make -j$CORE_NUM
+        make install
+        cd -
+        cp -r $BUILD_THIRD_PARTY_PATH/$name/include/* $INCLUDE_PATH
+        cp -r $BUILD_THIRD_PARTY_PATH/$name/lib/lib* $LIB_PATH
+
+    fi
 }
 
 build_glog() {
     path=$DEP_PATH/glog-0.3.4.tar.gz
-    if test -e $path; then
-        target_path=$THIRD_PARTY_PATH/glog
-        extract_dep $path $target_path
-        cd $target_path
-        ./configure --prefix=$BUILD_THIRD_PARTY_PATH/glog
-        make -j$CORE_NUM
-        make install
-        cd -
-        cp -r $BUILD_THIRD_PARTY_PATH/glog/include/glog $INCLUDE_PATH
-        cp -r $BUILD_THIRD_PARTY_PATH/glog/lib/lib* $LIB_PATH
-    fi
+    normal_install $path glog
 }
 
 build_thirdparty() {
