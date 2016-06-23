@@ -12,6 +12,11 @@ INCLUDE_PATH=$PROJECT_ROOT/include
 DEP_PATH=$PROJECT_ROOT/deps
 SRC_PATH=$PROJECT_ROOT/src
 
+NORMAL_MODE=ON
+NORMAL_MODE_WITHOUT_TEST=OFF
+OTHER_MAIN_MODE=OFF
+
+
 mkdir -p $BUILD_DEBUG_PATH $BUILD_RELEASE_PATH $BUILD_THIRD_PARTY_PATH $BUILD_TEST_PATH
 mkdir -p $LIB_PATH $INCLUDE_PATH
 CORE_NUM=$((`nproc`-4))
@@ -83,11 +88,16 @@ build_project() {
 
     mkdir -p $build
     cd $build
-    cmake_opts=""
-    if [[ $# == 2 ]]; then
-        cmake_opts=$2
-    fi
-    /usr/bin/cmake $args $cmake_opts $PROJECT_ROOT
+   # cmake_opts=""
+   # if [[ $# == 2 ]]; then
+   #     cmake_opts=$2
+   # fi
+    #/usr/bin/cmake $args $cmake_opts $PROJECT_ROOT
+    /usr/bin/cmake $args \
+    -D NORMAL_MODE=$NORMAL_MODE \
+    -D NORMAL_MODE_WITHOUT_TEST=$NORMAL_MODE_WITHOUT_TEST \
+    -D OTHER_MAIN_MODE=$OTHER_MAIN_MODE $PROJECT_ROOT
+
     make -j$CORE_NUM
     cd -
     ln -s $build/run run
@@ -98,7 +108,12 @@ build_file() {
     build=$BUILD_DEBUG_PATH
     mkdir -p $build
     cd $build
-    /usr/bin/cmake -D NORMAL_MODE=OFF -D NORMAL_MODE_WITHOUT_TEST=OFF -D OTHER_MAIN_MODE=ON -D OTHER_MAIN_FILE=$1 $PROJECT_ROOT
+    /usr/bin/cmake \
+    -D NORMAL_MODE=$NORMAL_MODE \
+    -D NORMAL_MODE_WITHOUT_TEST=$NORMAL_MODE_WITHOUT_TEST \
+    -D OTHER_MAIN_MODE=$OTHER_MAIN_MODE \
+    -D OTHER_MAIN_FILE=$1 $PROJECT_ROOT 
+
     make -j$CORE_NUM
     cd -
 }
@@ -133,9 +148,11 @@ elif [[ $# -ge 1 ]]; then
         help
     elif [[ $1 == "debug" ]] || [[ $1 == "release" ]]; then
         if [[ $# -ge 2 ]] && [[ $2 == "on" ]]; then
-            build_project $1 "-D NORMAL_MODE=ON -D NORMAL_MODE_WITHOUT_TEST=OFF"
+            build_project $1 
         else
-            build_project $1 "-D NORMAL_MODE_WITHOUT_TEST=ON -D NORMAL_MODE=OFF"
+            NORMAL_MODE=OFF
+            NORMAL_MODE_WITHOUT_TEST=ON
+            build_project $1 
         fi
     elif [[ $1 == "-3" ]] || [[ $1 == "thirdparty" ]]; then
         if [[ $# -ge 2 ]]; then
@@ -165,6 +182,9 @@ elif [[ $# -ge 1 ]]; then
         fi
     elif test -f $1; then
         echo "build file $1"
+        NORMAL_MODE=OFF
+        NORMAL_MODE_WITHOUT_TEST=OFF
+        OTHER_MAIN_MODE=ON
         build_file $1
     fi
 fi
