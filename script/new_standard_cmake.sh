@@ -3,6 +3,11 @@ if [ $# != 3 ]; then
     exit
 fi
 
+if test ! -d $2; then
+    echo $2 目录不存在
+    exit
+fi
+
 source=$1
 target=$2/$3
 

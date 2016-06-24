@@ -11,12 +11,11 @@ fi
 source=$1
 target=$2/$3
 
+
+
 cp -r $source $target
 cd $target
 
-sed  "s/SimpleMaven/$3/g"  pom.xml > pom
-mv pom pom.xml
+sed "s/__module_name__/$3/g" CMakeLists.txt > tmp
+mv tmp CMakeLists.txt
 
-sed  "s/SimpleMaven/$3/g"  run.sh > run
-mv run run.sh
-chmod +x run.sh

@@ -11,6 +11,7 @@
     - project_template 项目模板
         - SimpleMaven: Maven项目模板，自带离线部署，运行脚本
         - StandardCMake: CMake项目模板，自带gtest和glog，一键编译部署
+        - CMakeSubModule: CMake子模块
     - configure 各类配置
         - vim: vim配置和插件
 - script 工具脚本，包括产生项目时依赖的脚本以及其他一些工具
