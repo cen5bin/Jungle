@@ -1,9 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-set(PROJECG_NAME __project_name__)
+set(PROJECG_NAME ZMQTest)
 project(${PROJECG_NAME})
 
 set(PROJECT_DEP_LIST
     glog
+    zmq
 )
 
 set(CMAKE_CXX_FLAGS -std=c++11)
@@ -52,3 +53,5 @@ IF (${NORMAL_MODE})
     message(STATUS "build test")
     include(gtest)
 ENDIF()
+
+include(sub_module)
