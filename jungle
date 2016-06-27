@@ -9,6 +9,7 @@ class Jungle:
         self.root = os.path.split(os.path.realpath(__file__))[0]
         self.scriptRoot = os.path.join(self.root, 'script')
         self.baseScriptRoot = os.path.join(self.scriptRoot, 'base')
+        self.pyToolRoot = os.path.join(self.scriptRoot, 'pytool')
         self.resourcesRoot = os.path.join(self.root, 'resources')
         self.projectTemplateRoot = os.path.join(self.resourcesRoot, 'project_template')
         self.configureRoot = os.path.join(self.resourcesRoot, 'configure')
@@ -19,10 +20,11 @@ class Jungle:
             ('cmake', '<name> [path]', self.__newStandardCMakeProject, '创建标准CMake项目，自带gtest和glog'),
             ('cmakemod', '<name> [path]', self.__newCMakeModule, '创建CMake子模块'),
             ('cpp0', '<name> [path]', self.__newSimpleCMakeProject, '创建基础CMake项目'),
-            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass,cheader, ctest'),
+            ('new', '<kind> <name> [path]', self.__newFile, '\n\t创建文件, kind:c,cc,cpp,cclass,cheader,ctest,py'),
             ('vim', '', self.__configVim, 'vim配置'),
             ('idea', '', self.__configIDEA, 'idea配置'),
             ('tmux', '', self.__configTmux, 'tmux配置'),
+            ('time', '', self.__timetool, 'time工具'),
         ]
 
     def __showHelp(self):
@@ -62,7 +64,6 @@ class Jungle:
         print '模块路径: %s' % (os.path.realpath(path))
         os.system('sh %s %s %s %s' % (os.path.join(self.baseScriptRoot, 'new_cmake_module.sh'), os.path.join(self.projectTemplateRoot, 'CMakeSubModule'), os.path.realpath(path), name))
         
-
     def __nameTransform(self, name):
         #if '_' not in name:
         #   return name
@@ -101,6 +102,14 @@ class Jungle:
                 f = open(filename + ('.%s' % kind), 'w')
                 f.write('#include "%s.h"\n\n' % name)
                 f.close()
+        elif kind == 'py':
+            print '创建%s文件...............' % kind
+            print '文件名: %s.py' % name
+            filename = os.path.join(path, name)
+            f = open(filename + '.py', 'w')
+            f.write('#!/usr/bin/python\n#coding=utf-8\n\n\nif __name__ == \'__main__\':\n    pass\n')
+            f.close()
+            os.system('chmod +x %s.py' % filename)
 
     def __configVim(self):
         print '配置vim......................'
@@ -113,6 +122,12 @@ class Jungle:
         os.system('cp %s ~/.tmux.conf' % (os.path.join(os.path.join(self.configureRoot, 'tmux'), 'tmux.conf')))
         os.system('echo "alias tmux=\'tmux -2\'" >> ~/.bashrc')
         print '请执行source ~/.bashrc'
+
+    def __execPy(self, name):
+        os.system('%s/%s.py' % (self.pyToolRoot, name))
+    
+    def __timetool(self):
+        self.__execPy('timetool')
 
     def __invalid(self, cmd, argv):
         if len(cmd) == 0:
