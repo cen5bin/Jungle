@@ -21,8 +21,28 @@ def ts_to_str():
     dt = datetime.datetime.fromtimestamp(ts)
     print '实际时间: %s' % dt.strftime('%Y-%m-%d %H:%M:%S')
 
+def str_to_ts():
+    dt = input_data('输入时间: ').strip()
+    formts = [
+        '%Y-%m-%d %H:%M:%S',
+        '%Y/%m/%d %H:%M:%S',
+        '%Y-%m-%d',
+        '%Y/%m/%d',
+        '%Y-%m',
+        '%Y/%m',
+    ]
+    for f in formts:
+        try:
+            ts = time.mktime(time.strptime(dt, f))
+            print '时间戳: %s' % ts
+            return
+        except Exception, ex:
+            pass
+    print '格式错误'
+
 cmd_list = [
-    ('timestamp to date string', ts_to_str)        
+    ('timestamp to date string', ts_to_str),
+    ('date string to timestamp', str_to_ts),
 ]
 
 def show_list():
