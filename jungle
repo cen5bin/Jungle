@@ -8,6 +8,7 @@ class Jungle:
     def __init__(self):
         self.root = os.path.split(os.path.realpath(__file__))[0]
         self.scriptRoot = os.path.join(self.root, 'script')
+        self.baseScriptRoot = os.path.join(self.scriptRoot, 'base')
         self.resourcesRoot = os.path.join(self.root, 'resources')
         self.projectTemplateRoot = os.path.join(self.resourcesRoot, 'project_template')
         self.configureRoot = os.path.join(self.resourcesRoot, 'configure')
@@ -34,32 +35,32 @@ class Jungle:
 
     def __install(self):
         print '安装jungle...'
-        os.system('sh %s' % (os.path.join(self.scriptRoot, 'install_jungle.sh')))
+        os.system('sh %s' % (os.path.join(self.baseScriptRoot, 'install_jungle.sh')))
         print '安装完成，请执行source ~/.bashrc'
 
     def __newMavenProject(self, name, path='.'):
         print '创建maven工程...............'
         print '项目名称: %s' % (name)
         print '项目路径: %s' % (os.path.realpath(path))
-        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_maven.sh'), os.path.join(self.projectTemplateRoot, 'SimpleMaven'), os.path.realpath(path), name))
+        os.system('sh %s %s %s %s' % (os.path.join(self.baseScriptRoot, 'new_maven.sh'), os.path.join(self.projectTemplateRoot, 'SimpleMaven'), os.path.realpath(path), name))
 
     def __newSimpleCMakeProject(self, name, path='.'):
         print '创建Simple CMake工程...............'
         print '项目名称: %s' % (name)
         print '项目路径: %s' % (os.path.realpath(path))
-        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_simple_cmake.sh'), os.path.join(self.projectTemplateRoot, 'SimpleCMake'), path, name))
+        os.system('sh %s %s %s %s' % (os.path.join(self.baseScriptRoot, 'new_simple_cmake.sh'), os.path.join(self.projectTemplateRoot, 'SimpleCMake'), path, name))
 
     def __newStandardCMakeProject(self, name, path='.'):
         print '创建Standard CMake工程...............'
         print '项目名称: %s' % (name)
         print '项目路径: %s' % (os.path.realpath(path))
-        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_standard_cmake.sh'), os.path.join(self.projectTemplateRoot, 'StandardCMake'), os.path.realpath(path), name))
+        os.system('sh %s %s %s %s' % (os.path.join(self.baseScriptRoot, 'new_standard_cmake.sh'), os.path.join(self.projectTemplateRoot, 'StandardCMake'), os.path.realpath(path), name))
 
     def __newCMakeModule(self, name, path='.'):
         print '创建CMake子模块...............'
         print '模块名称: %s' % (name)
         print '模块路径: %s' % (os.path.realpath(path))
-        os.system('sh %s %s %s %s' % (os.path.join(self.scriptRoot, 'new_cmake_module.sh'), os.path.join(self.projectTemplateRoot, 'CMakeSubModule'), os.path.realpath(path), name))
+        os.system('sh %s %s %s %s' % (os.path.join(self.baseScriptRoot, 'new_cmake_module.sh'), os.path.join(self.projectTemplateRoot, 'CMakeSubModule'), os.path.realpath(path), name))
         
 
     def __nameTransform(self, name):
@@ -103,7 +104,7 @@ class Jungle:
 
     def __configVim(self):
         print '配置vim......................'
-        os.system('sh %s %s' % (os.path.join(self.scriptRoot, 'config_vim.sh'), os.path.join(self.configureRoot, 'vim')))
+        os.system('sh %s %s' % (os.path.join(self.baseScriptRoot, 'config_vim.sh'), os.path.join(self.configureRoot, 'vim')))
         
     def __configIDEA(self):
         print 'idea的配置在%s中，请在软件中导入' % (os.path.join(self.configureRoot, 'idea'))
