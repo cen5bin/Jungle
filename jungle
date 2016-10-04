@@ -25,6 +25,7 @@ class Jungle:
             ('idea', '', self.__configIDEA, 'idea配置'),
             ('tmux', '', self.__configTmux, 'tmux配置'),
             ('time', '', self.__timetool, 'time工具'),
+            ('ssh', '', self.__sshtool, 'ssh工具'),
         ]
 
     def __showHelp(self):
@@ -128,6 +129,9 @@ class Jungle:
     
     def __timetool(self):
         self.__execPy('timetool')
+
+    def __sshtool(self):
+        self.__execPy('sshtool')
 
     def __invalid(self, cmd, argv):
         if len(cmd) == 0:
