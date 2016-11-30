@@ -90,8 +90,8 @@ class Jungle:
             print '文件路径: %s' % (os.path.realpath(path))
             filename = os.path.join(path, name)
             f = open(filename + '.h', 'w')
-            f.write('#ifndef __%s_H\n' % name.upper())
-            f.write('#define __%s_H\n' % name.upper())
+            f.write('#ifndef __%s_H_\n' % name.upper())
+            f.write('#define __%s_H_\n' % name.upper())
             if kind == 'cclass':
                 name1 = self.__nameTransform(name)
                 f.write('class %s {\n\tpublic:\n\t\t%s(){}\n\t\tvirtual ~%s(){}\n\n\tprivate:\n\n};\n\n' % (name1, name1, name1))
