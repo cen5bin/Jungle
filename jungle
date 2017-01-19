@@ -74,6 +74,8 @@ class Jungle:
         if kind in ['cpp', 'cc', 'c', 'cheader', 'cclass', 'ctest']:
             print '创建%s文件...............' % kind
             if kind == 'ctest':
+                if not name.endswith('Test'):
+                    name = name + 'Test'
                 print '文件名称: %s.cc' % (name)
                 filename = os.path.join(path, name)
                 f = open(filename + '.cc', 'w')
